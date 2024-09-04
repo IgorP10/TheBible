@@ -1,0 +1,78 @@
+services:
+  app:
+    build: ./Build/App
+    working_dir: /application
+    volumes:
+      - '.:/application'
+      - "./Build/App/openssl.cnf.override:/etc/ssl/openssl.cnf"
+    links:
+      - mysql
+      - redis
+    depends_on:
+      - mysql
+      - redis
+    env_file:
+      - .env
+    environment:
+      PHP_IDE_CONFIG: "serverName=test.sheet.com.br"
+    networks:
+      - framework
+
+  nginx:
+    image: "nginx:1.27"
+    restart: always
+    links:
+      - app
+    working_dir: /application
+    volumes:
+      - '.:/application'
+      - "./Build/App/default.conf:/etc/nginx/conf.d/default.conf"
+    ports:
+      - "8080:80"
+    networks:
+      - framework
+
+  mysql:
+    image: mysql:8.0
+    env_file:
+      - ./.env
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_MYSQL_PASSWORD}"
+      MYSQL_DATABASE: "${DB_MYSQL_DATABASE}"
+      MYSQL_USER: "${DB_MYSQL_USER}"
+      MYSQL_PASSWORD: "${DB_MYSQL_PASSWORD}"
+    volumes:
+      - database:/var/lib/mysql2
+      - ./Migration/Initialization/structure.sql:/docker-entrypoint-initdb.d/structure.sql
+      - ./Build/App/custom.cnf:/etc/mysql/conf.d/custom.cnf
+    networks:
+      - framework
+
+  redis:
+    image: "redis:7.0"
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - framework
+
+  ngrok:
+    image: wernight/ngrok
+    command: ngrok http nginx:80
+    ports:
+      - "4040:4040"
+    environment:
+      NGROK_AUTHTOKEN: "${NGROK_AUTHTOKEN}"
+    depends_on:
+      - nginx
+    networks:
+      - framework
+
+volumes:
+  database:
+
+networks:
+  framework:
+    driver: bridge
