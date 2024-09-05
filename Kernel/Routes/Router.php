@@ -25,12 +25,11 @@ class Router
             }
 
             if (isset($routeInfo)) {
-                $prefixedPath = '/api' . $routeInfo->path;
-
-                self::$routes[$routeInfo->method][$prefixedPath] = [
+                self::$routes[$routeInfo->method][$routeInfo->path] = [
                     'controller' => $controllerClass,
                     'method' => $method->name,
-                    'middlewares' => $middlewares
+                    'middlewares' => $middlewares,
+                    'requiredParams' => $routeInfo->requiredParams  // Adiciona os parâmetros obrigatórios
                 ];
             }
         }
@@ -46,6 +45,14 @@ class Router
             throw new \Exception("Route not found", 404);
         }
 
+        // Valida parâmetros obrigatórios se houver
+        foreach ($action['requiredParams'] as $param) {
+            if (!$request->getAttribute($param)) {
+                throw new \Exception("Missing required parameter: $param", 400);
+            }
+        }
+
+        // Lida com middlewares
         foreach ($action['middlewares'] as $middleware) {
             $middlewareInstance = resolve($middleware);
             $response = $middlewareInstance->handle($request, function ($request) use ($action) {

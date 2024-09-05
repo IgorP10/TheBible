@@ -15,10 +15,19 @@ class BibleController
     }
 
     #[RouteAttribute('GET', '/books')]
-    public function getBooks(RequestInterface $request): ResponseInterface
+    public function getBooks(): ResponseInterface
     {
         $books = $this->bibleService->getBooks();
 
         return Response::json(['data' => $books]);
+    }
+
+    #[RouteAttribute('GET', '/book', ['abbrev'])]
+    public function getBook(RequestInterface $request): ResponseInterface
+    {
+        $abbreviation = $request->getAttribute('abbrev');
+        $book = $this->bibleService->getBook($abbreviation);
+
+        return Response::json(['data' => $book]);
     }
 }

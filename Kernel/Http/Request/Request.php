@@ -46,6 +46,23 @@ class Request implements RequestInterface
         return $this->queryParams;
     }
 
+    public function getAttribute(string $key): mixed
+    {
+        return $this->queryParams[$key] ?? null;
+    }
+
+    public function setAttributes(array $attributes): void
+    {
+        foreach ($attributes as $key => $value) {
+            $this->setAttribute($key, $value);
+        }
+    }
+
+    public function setAttribute(string $key, mixed $value): void
+    {
+        $this->queryParams[$key] = $value;
+    }
+
     public function getCookies(): array
     {
         return $_COOKIE;
