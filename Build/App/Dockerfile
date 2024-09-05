@@ -4,8 +4,8 @@ FROM php:8.3-fpm
 WORKDIR "/application"
 
 # Definindo as variáveis de ambiente para proxy
-ENV HTTP_PROXY=http://igpereir:Parede01@10.70.6.200:8080
-ENV HTTPS_PROXY=http://igpereir:Parede01@10.70.6.200:8080
+# ENV HTTP_PROXY=http://usuario:senha@host:porta
+# ENV HTTPS_PROXY=http://usuario:senha@host:porta
 
 RUN apt-get clean all && apt-get update
 RUN apt -y install redis ssmtp cron snmp mcrypt unzip curl libedit-dev libeditreadline-dev libedit2 libxml2-dev bison flex libbz2-dev libzip-dev libcurl4-openssl-dev libenchant-2-dev libpspell-dev libpng-dev libjpeg-dev libonig-dev libonig5 libsnmp-dev libtidy-dev libxslt1-dev libfreetype6-dev
