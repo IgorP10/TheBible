@@ -29,7 +29,7 @@ class Router
                     'controller' => $controllerClass,
                     'method' => $method->name,
                     'middlewares' => $middlewares,
-                    'requiredParams' => $routeInfo->requiredParams  // Adiciona os parâmetros obrigatórios
+                    'requiredParams' => $routeInfo->requiredParams
                 ];
             }
         }

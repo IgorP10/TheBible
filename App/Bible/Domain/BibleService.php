@@ -18,4 +18,9 @@ class BibleService
     {
         return $this->bookClient->getBook($abbreviation);
     }
+
+    public function getVersions(): array
+    {
+        return $this->bookClient->getVersions();
+    }
 }

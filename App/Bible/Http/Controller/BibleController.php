@@ -30,4 +30,12 @@ class BibleController
 
         return Response::json(['data' => $book]);
     }
+
+    #[RouteAttribute('GET', '/versions')]
+    public function getVersions(): ResponseInterface
+    {
+        $versions = $this->bibleService->getVersions();
+
+        return Response::json(['data' => $versions]);
+    }
 }

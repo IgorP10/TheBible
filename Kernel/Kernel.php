@@ -27,7 +27,7 @@ class Kernel
         } catch (\Throwable $exception) {
             $errorResponse = Response::json(
                 [
-                    'error' => "Internal Server Error",
+                    'error' => $exception->getCode(),
                     'message' => $exception->getMessage()
                 ],
                 500
