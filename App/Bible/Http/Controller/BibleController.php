@@ -21,18 +21,18 @@ class BibleController
     #[RouteAttribute('GET', '/books')]
     public function getBooks(): ResponseInterface
     {
-        $books = $this->bibleService->getBooks();
+        $books = $this->bookApplication->getBooks();
 
-        return Response::json(['data' => $books]);
+        return Response::json(['books' => $books->jsonSerialize()]);
     }
 
-    #[RouteAttribute('GET', '/book', ['abbrev'])]
-    public function getBook(RequestInterface $request): ResponseInterface
+    #[RouteAttribute('GET', '/book', ['id'])]
+    public function getBookByAbbreviation(RequestInterface $request): ResponseInterface
     {
-        $abbreviation = $request->getAttribute('abbrev');
-        $book = $this->bibleService->getBook($abbreviation);
+        $id = $request->getAttribute('id');
+        $book = $this->bookApplication->getBookById($id);
 
-        return Response::json(['data' => $book]);
+        return Response::json(['book' => $book->jsonSerialize()]);
     }
 
     #[RouteAttribute('GET', '/versions')]

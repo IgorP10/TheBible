@@ -12,6 +12,16 @@ class BookService
     {
     }
 
+    public function getBooks(): BookCollection
+    {
+        return $this->bookRepository->getBooks();
+    }
+
+    public function getBookById(int $id): ?Book
+    {
+        return $this->bookRepository->getBookById($id);
+    }
+
     public function saveBooks(BookCollection $bookCollection): array
     {
         $books = $bookCollection->all();

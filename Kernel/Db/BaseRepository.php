@@ -23,6 +23,16 @@ abstract class BaseRepository extends Orchestrator
         return $this->getEntityRepository()->findAll();
     }
 
+    protected function findByAll(array $criteria): array
+    {
+        return $this->getEntityRepository()->findBy($criteria);
+    }
+
+    protected function findOneBy(array $criteria): ?object
+    {
+        return $this->getEntityRepository()->findOneBy($criteria);
+    }
+
     protected function persist(object $entity): void
     {
         $this->getEntityManager()->persist($entity);
