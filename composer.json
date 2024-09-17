@@ -1,5 +1,5 @@
 {
-    "name": "igorp10/sheet-finance-assistant",
+    "name": "igorp10/the-bible",
     "autoload": {
         "psr-4": {
             "App\\": "App/",

@@ -1,11 +1,6 @@
 FROM php:8.3-fpm
 
-# Definir o diretório de trabalho dentro do container
 WORKDIR "/application"
-
-# Definindo as variáveis de ambiente para proxy
-# ENV HTTP_PROXY=http://usuario:senha@host:porta
-# ENV HTTPS_PROXY=http://usuario:senha@host:porta
 
 RUN apt-get clean all && apt-get update
 RUN apt -y install redis ssmtp cron snmp mcrypt unzip curl libedit-dev libeditreadline-dev libedit2 libxml2-dev bison flex libbz2-dev libzip-dev libcurl4-openssl-dev libenchant-2-dev libpspell-dev libpng-dev libjpeg-dev libonig-dev libonig5 libsnmp-dev libtidy-dev libxslt1-dev libfreetype6-dev
@@ -20,8 +15,16 @@ RUN apt-get update && \
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 
-# Instalar as extensões necessárias para trabalhar com MySQL
+# Instalar extensões para MySQL
 RUN docker-php-ext-install pdo pdo_mysql mysqli
+
+# Instalar extensões para PostgreSQL
+RUN apt-get update && \
+    apt-get install -y libpq-dev && \
+    docker-php-ext-install pdo_pgsql pgsql
+
+RUN docker-php-ext-enable pdo_pgsql
+RUN docker-php-ext-enable pgsql
 
 RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg
 
@@ -56,9 +59,7 @@ RUN apt-get update \
 RUN apt-get update
 RUN apt -y install librabbitmq-dev vim
 
-# RUN curl -k -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-#     composer --version
-
+# Instalar Composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 RUN composer self-update \
     composer --version

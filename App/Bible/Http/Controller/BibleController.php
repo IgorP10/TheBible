@@ -2,6 +2,8 @@
 
 namespace App\Bible\Http\Controller;
 
+use App\Bible\Application\BookApplication;
+use App\Bible\Application\DTO\BookDTO;
 use App\Bible\Domain\BibleService;
 use Kernel\Routes\RouteAttribute;
 use Kernel\Http\Response\Response;
@@ -10,8 +12,10 @@ use Kernel\Http\Response\Interfaces\ResponseInterface;
 
 class BibleController
 {
-    public function __construct(private BibleService $bibleService)
-    {
+    public function __construct(
+        private BibleService $bibleService,
+        private BookApplication $bookApplication
+    ) {
     }
 
     #[RouteAttribute('GET', '/books')]
@@ -37,5 +41,17 @@ class BibleController
         $versions = $this->bibleService->getVersions();
 
         return Response::json(['data' => $versions]);
+    }
+
+    #[RouteAttribute('POST', '/save-books')]
+    public function saveBooks(RequestInterface $request): ResponseInterface
+    {
+        $books = $request->getBody();
+
+        $savedBooks = $this->bookApplication->saveBooks(
+            new BookDTO($books['books'])
+        );
+
+        return Response::json(['data' => $savedBooks]);
     }
 }

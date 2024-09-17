@@ -62,6 +62,13 @@ if (!function_exists('setCache')) {
     }
 }
 
+if (!function_exists('getCache')) {
+    function getCache(string $key): mixed
+    {
+        return cache()->get($key);
+    }
+}
+
 if (!function_exists('config')) {
     function config(string $key): ?array
     {

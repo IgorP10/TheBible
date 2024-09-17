@@ -6,10 +6,10 @@ services:
       - '.:/application'
       - "./Build/App/openssl.cnf.override:/etc/ssl/openssl.cnf"
     links:
-      - mysql
+      - postgres
       - redis
     depends_on:
-      - mysql
+      - postgres
       - redis
     env_file:
       - .env
@@ -32,21 +32,19 @@ services:
     networks:
       - framework
 
-  mysql:
-    image: mysql:8.0
+  postgres:
+    image: postgres:15
     env_file:
       - ./.env
     ports:
-      - "3307:3306"
+      - "5432:5432"
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_MYSQL_PASSWORD}"
-      MYSQL_DATABASE: "${DB_MYSQL_DATABASE}"
-      MYSQL_USER: "${DB_MYSQL_USER}"
-      MYSQL_PASSWORD: "${DB_MYSQL_PASSWORD}"
+      POSTGRES_DB: "${DB_DATABASE}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
     volumes:
-      - database:/var/lib/mysql2
+      - database:/var/lib/postgresql/data
       - ./Migration/Initialization/structure.sql:/docker-entrypoint-initdb.d/structure.sql
-      - ./Build/App/custom.cnf:/etc/mysql/conf.d/custom.cnf
     networks:
       - framework
 

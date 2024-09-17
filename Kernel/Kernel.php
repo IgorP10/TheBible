@@ -5,7 +5,6 @@ namespace Kernel;
 use Kernel\Routes\Router;
 use Kernel\Http\Dispatcher;
 use Kernel\Http\Response\Response;
-use Kernel\Configuration\Environment;
 use Kernel\Routes\ControllersRegistry;
 use Kernel\Providers\ProviderInterface;
 use Kernel\Providers\ProvidersRegistry;
