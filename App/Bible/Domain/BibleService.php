@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Bible\Domain;
+
 use App\Bible\Infrastructure\Client\BookClient;
 
 class BibleService
@@ -17,10 +18,5 @@ class BibleService
     public function getBook(string $abbreviation): array
     {
         return $this->bookClient->getBook($abbreviation);
-    }
-
-    public function getVersions(): array
-    {
-        return $this->bookClient->getVersions();
     }
 }

@@ -43,17 +43,4 @@ class BookClient
 
         return $response;
     }
-
-    public function getVersions(): array
-    {
-        $response = $this->httpClient->get(self::A_BIBLIA_DIGITAL_GET_VERSIONS);
-
-        if ($response['status'] !== 200) {
-            throw new \Exception('Error getting versions');
-        }
-
-        $response = json_decode($response['body'], true);
-
-        return $response;
-    }
 }
