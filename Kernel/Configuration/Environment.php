@@ -9,48 +9,48 @@ namespace Kernel\Configuration;
  */
 class Environment
 {
-    private static array $ENVIRONMENTS_VARIABLES = [];
-    private static array $ENVIRONMENTS_VARIABLES_FROM_FILE = [];
-    private static array $ENVIRONMENTS_ALL = [];
+    private static array $environmentsVariables = [];
+    private static array $environmentsVariablesFromFile = [];
+    private static array $environmentsAll = [];
 
     /**
      * @return array<string, mixed>
      */
     public function getEnvironments(): array
     {
-        if (empty(self::$ENVIRONMENTS_ALL)) {
-            self::$ENVIRONMENTS_ALL = array_merge(
+        if (empty(self::$environmentsAll)) {
+            self::$environmentsAll = array_merge(
                 $this->createEnvironments(),
                 $this->createEnvironmentsFromFile()
             );
         }
 
-        return self::$ENVIRONMENTS_ALL;
+        return self::$environmentsAll;
     }
 
     private function createEnvironments(): array
     {
-        if (empty(self::$ENVIRONMENTS_VARIABLES)) {
-            self::$ENVIRONMENTS_VARIABLES = (array) getenv();
+        if (empty(self::$environmentsVariables)) {
+            self::$environmentsVariables = (array) getenv();
         }
 
-        return self::$ENVIRONMENTS_VARIABLES;
+        return self::$environmentsVariables;
     }
 
     private function createEnvironmentsFromFile(): array
     {
-        if (empty(self::$ENVIRONMENTS_VARIABLES_FROM_FILE)) {
+        if (empty(self::$environmentsVariablesFromFile)) {
             $filePath = __DIR__ . '/../../.env';
             if (file_exists($filePath)) {
                 try {
-                    self::$ENVIRONMENTS_VARIABLES_FROM_FILE = parse_ini_file($filePath, true, INI_SCANNER_TYPED);
+                    self::$environmentsVariablesFromFile = parse_ini_file($filePath, true, INI_SCANNER_TYPED);
                 } catch (\Throwable $e) {
-                    self::$ENVIRONMENTS_VARIABLES_FROM_FILE = [];
+                    self::$environmentsVariablesFromFile = [];
                 }
             }
         }
 
-        return self::$ENVIRONMENTS_VARIABLES_FROM_FILE;
+        return self::$environmentsVariablesFromFile;
     }
 
     /**
@@ -61,8 +61,8 @@ class Environment
     public function set(string $key, mixed $value): self
     {
         $this->createEnvironmentsFromFile();
-        self::$ENVIRONMENTS_VARIABLES_FROM_FILE[$key] = $value;
-        self::$ENVIRONMENTS_ALL = [];
+        self::$environmentsVariablesFromFile[$key] = $value;
+        self::$environmentsAll = [];
 
         return $this;
     }

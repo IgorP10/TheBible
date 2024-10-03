@@ -10,7 +10,7 @@ class Router
 {
     protected static $routes = [];
 
-    public function register($controllerClass)
+    public function register(object|string $controllerClass)
     {
         $reflectionClass = new \ReflectionClass($controllerClass);
         foreach ($reflectionClass->getMethods() as $method) {
