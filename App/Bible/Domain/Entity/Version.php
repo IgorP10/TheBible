@@ -15,7 +15,7 @@ class Version extends Entity
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 10, nullable: false, name:"version_code")]
+    #[ORM\Column(name: "version_code", type: "string", length: 10, nullable: false)]
     private string $versionCode;
 
     #[ORM\Column(type: "string", length: 255, nullable: false)]

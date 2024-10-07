@@ -2,15 +2,15 @@
 
 namespace App\Bible\Http\Controller;
 
-use App\Bible\Application\BookApplication;
+use Kernel\Http\Request\Request;
+use Kernel\Routes\RouteAttribute;
+use App\Bible\Domain\BibleService;
+use Kernel\Http\Response\Response;
 use App\Bible\Application\DTO\BookDTO;
 use App\Bible\Application\DTO\VersionDTO;
-use App\Bible\Application\DTO\VersionFilterDTO;
+use App\Bible\Application\BookApplication;
 use App\Bible\Application\VersionApplication;
-use App\Bible\Domain\BibleService;
-use Kernel\Routes\RouteAttribute;
-use Kernel\Http\Response\Response;
-use Kernel\Http\Request\Interfaces\RequestInterface;
+use App\Bible\Application\DTO\VersionFilterDTO;
 use Kernel\Http\Response\Interfaces\ResponseInterface;
 
 class BibleController
@@ -27,20 +27,20 @@ class BibleController
     {
         $books = $this->bookApplication->getBooks();
 
-        return Response::json(['books' => $books->jsonSerialize()]);
+        return Response::json(['books' => $books]);
     }
 
     #[RouteAttribute('GET', '/book', ['id'])]
-    public function getBookByAbbreviation(RequestInterface $request): ResponseInterface
+    public function getBookByAbbreviation(Request $request): ResponseInterface
     {
         $id = $request->getAttribute('id');
         $book = $this->bookApplication->getBookById($id);
 
-        return Response::json(['book' => $book->jsonSerialize()]);
+        return Response::json(['book' => $book]);
     }
 
     #[RouteAttribute('POST', '/save-books')]
-    public function saveBooks(RequestInterface $request): ResponseInterface
+    public function saveBooks(Request $request): ResponseInterface
     {
         $body = $request->getBody();
 
@@ -56,20 +56,20 @@ class BibleController
     {
         $versions = $this->versionApplication->getVersions();
 
-        return Response::json(['versions' => $versions->jsonSerialize()]);
+        return Response::json(['versions' => $versions]);
     }
 
     #[RouteAttribute('GET', '/version', ['id'])]
-    public function getVersionById(RequestInterface $request): ResponseInterface
+    public function getVersionById(Request $request): ResponseInterface
     {
         $id = $request->getAttribute('id');
         $version = $this->versionApplication->getVersionById($id);
 
-        return Response::json(['version' => $version->jsonSerialize()]);
+        return Response::json(['version' => $version]);
     }
 
     #[RouteAttribute('GET', '/version-by-params')]
-    public function getVersionByParams(RequestInterface $request): ResponseInterface
+    public function getVersionByParams(Request $request): ResponseInterface
     {
         $params = $request->getQueryParams();
         $version = $this->versionApplication->getVersionByFilter(
@@ -79,11 +79,11 @@ class BibleController
             )
         );
 
-        return Response::json(['version' => $version->jsonSerialize()]);
+        return Response::json(['version' => $version]);
     }
 
     #[RouteAttribute('POST', '/save-versions')]
-    public function saveVersions(RequestInterface $request): ResponseInterface
+    public function saveVersions(Request $request): ResponseInterface
     {
         $body = $request->getBody();
 

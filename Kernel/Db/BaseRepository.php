@@ -3,6 +3,7 @@
 namespace Kernel\Db;
 
 use Kernel\Db\Connection\Orchestrator;
+use Kernel\Utility\Entity;
 
 abstract class BaseRepository extends Orchestrator
 {
@@ -23,32 +24,99 @@ abstract class BaseRepository extends Orchestrator
         return $this->getEntityRepository()->findAll();
     }
 
-    protected function findByAll(array $criteria): array
+    protected function findByFilters(array $filters = [], ?array $orderBy = null, ?int $limit = null, ?int $page = 1): array
     {
-        return $this->getEntityRepository()->findBy($criteria);
+        return $this->getEntityRepository()
+            ->findBy(
+                $filters,
+                $orderBy,
+                $limit,
+                $this->setPage($page, $limit)
+            );
     }
 
-    protected function findOneBy(array $criteria): ?object
+    protected function setPage(?int $page = 1, ?int $limit = null)
     {
-        return $this->getEntityRepository()->findOneBy($criteria);
+        if (is_null($limit)) {
+            return 0;
+        }
+
+        return (int) ($page - 1) * $limit;
+    }
+
+    protected function findOneBy(array $filters): ?object
+    {
+        return $this->getEntityRepository()->findOneBy($filters);
     }
 
     protected function persist(object $entity): void
     {
         $this->getEntityManager()->persist($entity);
+    }
+
+    protected function flush(): void
+    {
         $this->getEntityManager()->flush();
+    }
+
+    protected function save(object $entity): object
+    {
+        $this->transactional(function (self $repository) use ($entity) {
+            $repository->persist($entity);
+            $repository->flush();
+        });
+
+        return $entity;
+    }
+
+    protected function transactional(callable $callback): mixed
+    {
+        $this->beginTransaction();
+        try {
+
+            $result = $callback($this);
+            $this->commit();
+
+            return $result;
+        } catch (\Throwable $e) {
+            $this->rollback();
+            throw $e;
+        }
+    }
+
+    protected function beginTransaction(): void
+    {
+        $this->getEntityManager()->beginTransaction();
+    }
+
+    protected function rollback(): void
+    {
+        $this->getEntityManager()->rollback();
+    }
+
+    protected function commit(): void
+    {
+        $this->getEntityManager()->commit();
     }
 
     protected function remove(object $entity): void
     {
         $this->getEntityManager()->remove($entity);
-        $this->getEntityManager()->flush();
     }
 
-    protected function update(object $entity): void
+    protected function clear(): void
     {
-        $this->getEntityManager()->merge($entity);
-        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
+    }
+
+    public function createEntity(): Entity
+    {
+        return new ($this->getEntity());
+    }
+
+    public function getReference(string $entity, int $id): ?Entity
+    {
+        return $this->getEntityManager()->getReference($entity, $id);
     }
 
     protected function getEntityRepository(): \Doctrine\ORM\EntityRepository

@@ -25,9 +25,17 @@ class BookRepository extends BaseRepository
         return $this->findById($id);
     }
 
+    public function getBookByName(string $name): ?Book
+    {
+        return $this->findOneBy([
+            'name' => $name
+        ]);
+    }
+
     public function saveBook(Book $book): Book
     {
         $this->persist($book);
+        $this->flush();
 
         return $book;
     }

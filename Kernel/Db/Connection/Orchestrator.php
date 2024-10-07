@@ -6,7 +6,6 @@ use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 
 abstract class Orchestrator
 {

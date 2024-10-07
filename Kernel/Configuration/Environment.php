@@ -4,67 +4,39 @@ declare(strict_types=1);
 
 namespace Kernel\Configuration;
 
+use RuntimeException;
+
 /**
- * This class is responsible for managing environment settings
+ * Singleton class responsible for managing environment settings
  */
 class Environment
 {
-    private static array $environmentsVariables = [];
-    private static array $environmentsVariablesFromFile = [];
-    private static array $environmentsAll = [];
+    private static ?self $instance = null;
+    private array $envVariables = [];
+    private array $envVariablesFromFile = [];
+
+    public function __construct()
+    {
+        $this->envVariables = $this->loadSystemEnvironments();
+        $this->envVariablesFromFile = $this->loadEnvironmentsFromFile();
+    }
 
     /**
      * @return array<string, mixed>
      */
     public function getEnvironments(): array
     {
-        if (empty(self::$environmentsAll)) {
-            self::$environmentsAll = array_merge(
-                $this->createEnvironments(),
-                $this->createEnvironmentsFromFile()
-            );
-        }
-
-        return self::$environmentsAll;
-    }
-
-    private function createEnvironments(): array
-    {
-        if (empty(self::$environmentsVariables)) {
-            self::$environmentsVariables = (array) getenv();
-        }
-
-        return self::$environmentsVariables;
-    }
-
-    private function createEnvironmentsFromFile(): array
-    {
-        if (empty(self::$environmentsVariablesFromFile)) {
-            $filePath = __DIR__ . '/../../.env';
-            if (file_exists($filePath)) {
-                try {
-                    self::$environmentsVariablesFromFile = parse_ini_file($filePath, true, INI_SCANNER_TYPED);
-                } catch (\Throwable $e) {
-                    self::$environmentsVariablesFromFile = [];
-                }
-            }
-        }
-
-        return self::$environmentsVariablesFromFile;
+        return array_merge($this->envVariables, $this->envVariablesFromFile);
     }
 
     /**
      * @param string $key
      * @param mixed $value
-     * @return self
+     * @return void
      */
-    public function set(string $key, mixed $value): self
+    public function set(string $key, mixed $value): void
     {
-        $this->createEnvironmentsFromFile();
-        self::$environmentsVariablesFromFile[$key] = $value;
-        self::$environmentsAll = [];
-
-        return $this;
+        $this->envVariablesFromFile[$key] = $value;
     }
 
     /**
@@ -74,7 +46,37 @@ class Environment
      */
     public function get(string $key, ?string $defaultValue = null): mixed
     {
-        $environments = $this->getEnvironments();
-        return $environments[$key] ?? $defaultValue;
+        $env = $this->getEnvironments();
+        return $env[$key] ?? $defaultValue;
+    }
+
+    /**
+     * Load system environment variables
+     * 
+     * @return array<string, mixed>
+     */
+    private function loadSystemEnvironments(): array
+    {
+        return (array) getenv();
+    }
+
+    /**
+     * Load environment variables from .env file
+     * 
+     * @return array<string, mixed>
+     */
+    private function loadEnvironmentsFromFile(): array
+    {
+        $filePath = __DIR__ . '/../../.env';
+        if (!file_exists($filePath)) {
+            return [];
+        }
+
+        $envVariables = parse_ini_file($filePath, true, INI_SCANNER_TYPED);
+        if ($envVariables === false) {
+            throw new RuntimeException("Failed to parse .env file at: {$filePath}");
+        }
+
+        return $envVariables;
     }
 }

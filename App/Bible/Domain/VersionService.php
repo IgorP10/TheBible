@@ -64,16 +64,16 @@ class VersionService
         }
     }
 
-    public function saveVersions(VersionCollection $versionCollection): array
+    public function saveVersions(VersionCollection $versionCollection): VersionCollection
     {
         $versions = $versionCollection->all();
-        $savedVersions = [];
+        $savedVersions = new VersionCollection([]);
         foreach ($versions as $version) {
             if (!$version instanceof Version) {
                 throw new \InvalidArgumentException('Invalid version object');
             }
 
-            $savedVersions[] = $this->versionRepository->saveVersion($version);
+            $savedVersions->add($this->versionRepository->saveVersion($version));
         }
 
         return $savedVersions;

@@ -39,7 +39,6 @@ class HttpClient
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $formattedHeaders = [];
-
         foreach ($headers as $key => $value) {
             $formattedHeaders[] = "$key: $value";
         }

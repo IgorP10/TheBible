@@ -32,7 +32,7 @@ class VersionApplication
         return $this->versionService->getVersionByFilter($filter->toArray());
     }
 
-    public function saveVersions(VersionDTO $versions): array
+    public function saveVersions(VersionDTO $versions): VersionCollection
     {
         return $this->versionService->saveVersions($versions->getVersionCollection());
     }

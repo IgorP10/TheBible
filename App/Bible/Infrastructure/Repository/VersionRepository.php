@@ -33,6 +33,7 @@ class VersionRepository extends BaseRepository
     public function saveVersion(Version $version): Version
     {
         $this->persist($version);
+        $this->flush();
 
         return $version;
     }

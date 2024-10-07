@@ -46,16 +46,38 @@ class BookService
         }
     }
 
-    public function saveBooks(BookCollection $bookCollection): array
+    public function getBookByName(string $name): ?Book
+    {
+        try {
+            if ($book = getCache('book_' . $name)) {
+                return $book;
+            }
+
+            $book = $this->bookRepository->getBookByName($name);
+
+            setCache('book_' . $name, $book, 3600);
+
+            return $book;
+        } catch (\Exception $e) {
+            throw new \Exception('Error getting book');
+        }
+    }
+
+    public function saveBooks(BookCollection $bookCollection): BookCollection
     {
         $books = $bookCollection->all();
-        $savedBooks = [];
+        $savedBooks = new BookCollection([]);
         foreach ($books as $book) {
             if (!$book instanceof Book) {
                 throw new \InvalidArgumentException('All items in the collection must be instances of Book.');
             }
 
-            $savedBooks[] = $this->bookRepository->saveBook($book);
+            if (!empty($this->getBookByName($book->getName()))) {
+                $savedBooks->add($book);
+                continue;
+            }
+
+            $savedBooks->add($this->bookRepository->saveBook($book));
         }
 
         return $savedBooks;

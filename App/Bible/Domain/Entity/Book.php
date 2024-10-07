@@ -23,26 +23,26 @@ class Book extends Entity
     #[ORM\Column(type: "string", length: 3, nullable: false)]
     private string $testament;
 
-    #[ORM\Column(type: "string", length: 255, nullable: false)]
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private string $author;
 
-    #[ORM\Column(type: "integer", nullable: false)]
-    private int $chapters;
+    #[ORM\Column(name: "total_chapters", type: "integer", nullable: true)]
+    private int $totalChapters;
 
-    #[ORM\Column(type: "string", length: 255, nullable: false, name: "`group`")]
+    #[ORM\Column(type: "string", length: 255, nullable: true, name: "`group`")]
     private string $group;
 
     public function __construct(
         array $abbreviation,
         string $author,
-        int $chapters,
+        int $totalChapters,
         string $group,
         string $name,
         string $testament
     ) {
         $this->abbreviation = $abbreviation;
         $this->author = $author;
-        $this->chapters = $chapters;
+        $this->totalChapters = $totalChapters;
         $this->group = $group;
         $this->name = $name;
         $this->testament = $testament;

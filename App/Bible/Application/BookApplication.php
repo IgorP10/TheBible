@@ -11,8 +11,7 @@ class BookApplication
 {
     public function __construct(
         private BookService $bookService
-    )
-    {
+    ) {
     }
 
     public function getBooks(): BookCollection
@@ -25,7 +24,7 @@ class BookApplication
         return $this->bookService->getBookById($id);
     }
 
-    public function saveBooks(BookDTO $bookDTO): array
+    public function saveBooks(BookDTO $bookDTO): BookCollection
     {
         return $this->bookService->saveBooks($bookDTO->getBookCollection());
     }
